@@ -1,9 +1,13 @@
+import {Fragment} from "react";
+import Header from "./Header/Header";
+import './App.css'
+
 function App() {
-  return (
-    <div>
-      hello world
-    </div>
-  );
+    return (
+        <Fragment>
+            <Header/>
+        </Fragment>
+    );
 }
 
 export default App;
