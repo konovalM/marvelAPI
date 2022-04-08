@@ -2,6 +2,7 @@ import {Fragment} from "react";
 import Header from "./Header/Header";
 import './App.css'
 import CharacterHeader from "./Characters/CharacterHeader";
+import Content from "./Characters/Content";
 
 function App() {
     const url = 'https://jsonplaceholder.typicode.com/posts';
@@ -21,6 +22,7 @@ function App() {
         <Fragment>
             <Header/>
             <CharacterHeader/>
+            <Content/>
         </Fragment>
     );
 }

@@ -5,6 +5,7 @@ import left from '../images/leftTriangle.svg'
 import right from '../images/rightTriangle.svg'
 import leftB from '../images/leftBlack.svg'
 import rightB from '../images/rightBlack.svg'
+import Button from "./Button";
 
 const CharacterMainTag = styled.section`
   .container{
@@ -41,7 +42,7 @@ const CharacterMainTag = styled.section`
   .buttons{
     display: flex;
   }
-  .characterBtn{
+  /*.characterBtn{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,7 +81,7 @@ const CharacterMainTag = styled.section`
     width: 12px;
     height: 12px;
     background: url(${right})center center/cover no-repeat;
-  }
+  }*/
   .rightBtn{
     position: relative;
     background: #5C5C5C;
@@ -159,8 +160,8 @@ const CharacterHeader = () => {
                                 </h3>
                                 <div className="descr">As the Norse God of thunder and lightning, Thor wields one of the greatest weapons ever made, the enchanted hammer Mjolnir. While others have described Thor as an over-muscled, oafish imbecile, he's quite smart and compassionate...</div>
                                 <div className="buttons">
-                                    <a href='#' className="characterBtn leftBtn">HOMEPAGE</a>
-                                    <a href='#' className="characterBtn rightBtn">WIKI</a>
+                                    <Button text='HOMEPAGE' color='#9F0013' margin='0 30px 0 0'/>
+                                    <Button text='WIKI' color='#5C5C5C'/>
                                 </div>
 
                             </div>
