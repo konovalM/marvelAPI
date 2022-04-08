@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 import {Fragment} from "react";
-import thor from '../images/thor.jpg'
-import left from '../images/leftTriangle.svg'
-import right from '../images/rightTriangle.svg'
-import leftB from '../images/leftBlack.svg'
-import rightB from '../images/rightBlack.svg'
+import thor from '../../images/thor.jpg'
+import left from '../../images/leftTriangle.svg'
+import right from '../../images/rightTriangle.svg'
+import leftB from '../../images/leftBlack.svg'
+import rightB from '../../images/rightBlack.svg'
 import Button from "./Button";
 
 const CharacterMainTag = styled.section`

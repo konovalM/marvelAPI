@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 import {Fragment} from "react";
-import abyss from '../images/abys.jpg'
+import abyss from '../../images/abys.jpg'
 import Button from "./Button";
-import left from '../images/leftTriangle.svg'
-import right from '../images/rightTriangle.svg'
-import tor from '../images/thor.jpg'
-import asset from '../images/asset.png'
+import left from '../../images/leftTriangle.svg'
+import right from '../../images/rightTriangle.svg'
+import tor from '../../images/thor.jpg'
+import asset from '../../images/asset.png'
 
 const SectionContent = styled.section`
   padding: 50px 0 45px;

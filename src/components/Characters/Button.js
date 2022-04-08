@@ -1,9 +1,9 @@
 import {Fragment} from "react";
 import styled from 'styled-components'
-import left from '../images/leftTriangle.svg'
-import right from '../images/rightTriangle.svg'
-import leftB from '../images/leftBlack.svg'
-import rightB from '../images/rightBlack.svg'
+import left from '../../images/leftTriangle.svg'
+import right from '../../images/rightTriangle.svg'
+import leftB from '../../images/leftBlack.svg'
+import rightB from '../../images/rightBlack.svg'
 
 const LinkA = styled.a`
       

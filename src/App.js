@@ -1,23 +1,20 @@
 import {Fragment} from "react";
-import Header from "./Header/Header";
+import Header from "./components/Header/Header";
 import './App.css'
-import CharacterHeader from "./Characters/CharacterHeader";
-import Content from "./Characters/Content";
+import CharacterHeader from "./components/Characters/CharacterHeader";
+import Content from "./components/Characters/Content";
+import MarvelService from "./services/MarvelService";
+
+
+
+
 
 function App() {
-    const url = 'https://jsonplaceholder.typicode.com/posts';
+    const instance = new MarvelService();
 
-    function sendRequest(url){
-        return fetch(url).then(response => {
-            return response.json()
-        })
-
-    }
-
-    sendRequest(url).then(response => {
-        console.log(response[0].title)
+    instance.getAllCharacters().then((res) => {
+        res.data.results.forEach(item => console.log(item.name))
     })
-
     return (
         <Fragment>
             <Header/>
