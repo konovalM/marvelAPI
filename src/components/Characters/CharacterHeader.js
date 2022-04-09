@@ -1,11 +1,12 @@
 import styled from 'styled-components'
-import {Fragment} from "react";
+import {Component, Fragment} from "react";
 import thor from '../../images/thor.jpg'
 import left from '../../images/leftTriangle.svg'
 import right from '../../images/rightTriangle.svg'
 import leftB from '../../images/leftBlack.svg'
 import rightB from '../../images/rightBlack.svg'
 import Button from "./Button";
+import MarvelService from "../../services/MarvelService";
 
 const CharacterMainTag = styled.section`
   .container{
@@ -144,39 +145,78 @@ const CharacterMainTag = styled.section`
 `
 
 
-const CharacterHeader = () => {
-    return(
-        <Fragment>
-            <CharacterMainTag className="main">
-                <div className="container">
-                    <div className="wrapper">
-                        <div className="gridItem">
-                            <div className="imagePerson">
-                                <img src={thor} alt="THOR"/>
-                            </div>
-                            <div className="about">
-                                <h3 className="title">
-                                    THOR
-                                </h3>
-                                <div className="descr">As the Norse God of thunder and lightning, Thor wields one of the greatest weapons ever made, the enchanted hammer Mjolnir. While others have described Thor as an over-muscled, oafish imbecile, he's quite smart and compassionate...</div>
-                                <div className="buttons">
-                                    <Button text='HOMEPAGE' color='#9F0013' margin='0 30px 0 0'/>
-                                    <Button text='WIKI' color='#5C5C5C'/>
-                                </div>
+class CharacterHeader extends Component {
+    constructor(props) {
+        super(props)
+        this.getData()
+    }
+    state = {
+        character: {
+            name: null,
+            description: null,
+            thumbnail: null,
+            homepage: null,
+            wiki: null
+        }
+    }
+    marvelService = new MarvelService()
 
+    getData = () => {
+        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
+        const template = 'Sorry, this character hasn\'t description.'
+        this.marvelService.getCharacter(id)
+            .then((res) => {
+                this.setState({character: res})
+                if (res.description == ''){
+                    this.setState(({character}) => {
+                            return (character.description = template);
+                        }
+                    )
+                }
+                if (res.description.length > 200){
+                    const newDescr = res.description.slice(0, 200) + '...'
+                    this.setState(({character}) => {
+                            return (character.description = newDescr);
+                        }
+                    )
+                }
+            })
+    }
+    render() {
+        const {character: {name, description, thumbnail, homepage, wiki}} = this.state
+        return(
+            <Fragment>
+                <CharacterMainTag className="main">
+                    <div className="container">
+                        <div className="wrapper">
+                            <div className="gridItem">
+                                <div className="imagePerson">
+                                    <img src={thumbnail} alt={name}/>
+                                </div>
+                                <div className="about">
+                                    <h3 className="title">
+                                        {name}
+                                    </h3>
+                                    <div className="descr">{description}</div>
+                                    <div className="buttons">
+                                        <Button text='HOMEPAGE' color='#9F0013' margin='0 30px 0 0' link={homepage}/>
+                                        <Button text='WIKI' color='#5C5C5C' link={wiki}/>
+                                    </div>
+
+                                </div>
                             </div>
-                        </div>
-                        <div className="gridItem">
-                            <div className="textTop">Random character for today!<br/>
-                                Do you want to get to know him better?</div>
-                            <div className="textBottom">Or choose another one</div>
-                            <a href='#' className="btn">TRY IT</a>
+                            <div className="gridItem">
+                                <div className="textTop">Random character for today!<br/>
+                                    Do you want to get to know him better?</div>
+                                <div className="textBottom">Or choose another one</div>
+                                <a href='#' className="btn">TRY IT</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </CharacterMainTag>
-        </Fragment>
-    )
+                </CharacterMainTag>
+            </Fragment>
+        )
+    }
 }
 
 export default CharacterHeader

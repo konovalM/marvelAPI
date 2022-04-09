@@ -47,10 +47,10 @@ const LinkA = styled.a`
 `
 
 
-const Button = ({text, color, margin=null}) => {
+const Button = ({text, color, link=null, margin=null}) => {
     return(
         <Fragment>
-            <LinkA href='#'color={color} margin={margin}>{text}</LinkA>
+            <LinkA href={link} color={color} margin={margin}>{text}</LinkA>
         </Fragment>
     )
 }
