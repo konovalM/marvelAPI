@@ -7,6 +7,8 @@ import leftB from '../../images/leftBlack.svg'
 import rightB from '../../images/rightBlack.svg'
 import Button from "./Button";
 import MarvelService from "../../services/MarvelService";
+import Spinner from "./Spinner";
+import Error from "./Error";
 
 const CharacterMainTag = styled.section`
   .container{
@@ -157,7 +159,9 @@ class CharacterHeader extends Component {
             thumbnail: null,
             homepage: null,
             wiki: null
-        }
+        },
+        loading: true,
+        error: false
     }
     marvelService = new MarvelService()
 
@@ -166,7 +170,9 @@ class CharacterHeader extends Component {
         const template = 'Sorry, this character hasn\'t description.'
         this.marvelService.getCharacter(id)
             .then((res) => {
-                this.setState({character: res})
+                this.setState({character: res, loading: false})
+
+
                 if (res.description == ''){
                     this.setState(({character}) => {
                             return (character.description = template);
@@ -181,30 +187,20 @@ class CharacterHeader extends Component {
                     )
                 }
             })
+            .catch(() => {
+                this.setState({error: true})
+            })
     }
     render() {
-        const {character: {name, description, thumbnail, homepage, wiki}} = this.state
+        const {character, loading, error} = this.state
+        const errorComponent = error ? <Error/> : '',
+            mainContent = loading ? <Spinner/> : <Char char={character}/>;
         return(
             <Fragment>
                 <CharacterMainTag className="main">
                     <div className="container">
                         <div className="wrapper">
-                            <div className="gridItem">
-                                <div className="imagePerson">
-                                    <img src={thumbnail} alt={name}/>
-                                </div>
-                                <div className="about">
-                                    <h3 className="title">
-                                        {name}
-                                    </h3>
-                                    <div className="descr">{description}</div>
-                                    <div className="buttons">
-                                        <Button text='HOMEPAGE' color='#9F0013' margin='0 30px 0 0' link={homepage}/>
-                                        <Button text='WIKI' color='#5C5C5C' link={wiki}/>
-                                    </div>
-
-                                </div>
-                            </div>
+                            {errorComponent || mainContent}
                             <div className="gridItem">
                                 <div className="textTop">Random character for today!<br/>
                                     Do you want to get to know him better?</div>
@@ -217,6 +213,27 @@ class CharacterHeader extends Component {
             </Fragment>
         )
     }
+}
+
+const Char = ({char}) => {
+    const {name, description, thumbnail, homepage, wiki} = char
+    return (
+        <div className="gridItem">
+            <div className="imagePerson">
+                <img src={thumbnail} alt={name}/>
+            </div>
+            <div className="about">
+                <h3 className="title">
+                    {name}
+                </h3>
+                <div className="descr">{description}</div>
+                <div className="buttons">
+                    <Button text='HOMEPAGE' color='#9F0013' margin='0 30px 0 0' link={homepage}/>
+                    <Button text='WIKI' color='#5C5C5C' link={wiki}/>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default CharacterHeader
