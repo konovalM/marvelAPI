@@ -144,57 +144,82 @@ const CharacterMainTag = styled.section`
     height: 12px;
     background: url(${rightB})center center/cover no-repeat;
   }
+  .contain{
+    object-fit: contain;
+  }
 `
 
 
 class CharacterHeader extends Component {
     constructor(props) {
         super(props)
+        this.state = {
+            character: {
+                name: null,
+                description: null,
+                thumbnail: null,
+                homepage: null,
+                wiki: null
+            },
+            loading: true,
+            error: false
+        }
+        this.template = 'Sorry, this character hasn\'t description.'
+        console.log('constructor')
+    }
+
+    componentDidMount() {
+        console.log('mount')
         this.getData()
     }
-    state = {
-        character: {
-            name: null,
-            description: null,
-            thumbnail: null,
-            homepage: null,
-            wiki: null
-        },
-        loading: true,
-        error: false
-    }
+
+
     marvelService = new MarvelService()
+
+    onCharLoaded = (char) => {
+        this.setState({character: char, loading: false, error: false})
+
+        if (char.description == ''){
+            this.setState(({character}) => {
+                    return (character.description = this.template);
+                }
+            )
+        }
+
+        if (char.description.length > 200){
+            const newDescr = char.description.slice(0, 200) + '...'
+            this.setState(({character}) => {
+                    return (character.description = newDescr);
+                }
+            )
+        }
+    }
+
+    onError = () => {
+        this.setState({error: true})
+    }
 
     getData = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
-        const template = 'Sorry, this character hasn\'t description.'
         this.marvelService.getCharacter(id)
             .then((res) => {
-                this.setState({character: res, loading: false})
-
-
-                if (res.description == ''){
-                    this.setState(({character}) => {
-                            return (character.description = template);
-                        }
-                    )
-                }
-                if (res.description.length > 200){
-                    const newDescr = res.description.slice(0, 200) + '...'
-                    this.setState(({character}) => {
-                            return (character.description = newDescr);
-                        }
-                    )
-                }
+                this.onCharLoaded(res)
             })
             .catch(() => {
-                this.setState({error: true})
+                this.onError()
             })
     }
+
+    changeChar = () => {
+        this.setState({loading: true})
+        this.getData()
+    }
+
     render() {
         const {character, loading, error} = this.state
         const errorComponent = error ? <Error/> : '',
             mainContent = loading ? <Spinner/> : <Char char={character}/>;
+        console.log('render')
         return(
             <Fragment>
                 <CharacterMainTag className="main">
@@ -205,7 +230,7 @@ class CharacterHeader extends Component {
                                 <div className="textTop">Random character for today!<br/>
                                     Do you want to get to know him better?</div>
                                 <div className="textBottom">Or choose another one</div>
-                                <a href='#' className="btn">TRY IT</a>
+                                <a href='#' className="btn" onClick={this.changeChar}>TRY IT</a>
                             </div>
                         </div>
                     </div>
@@ -217,10 +242,12 @@ class CharacterHeader extends Component {
 
 const Char = ({char}) => {
     const {name, description, thumbnail, homepage, wiki} = char
+    const imageNotFound = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
+
     return (
         <div className="gridItem">
             <div className="imagePerson">
-                <img src={thumbnail} alt={name}/>
+                {thumbnail == imageNotFound ? <img src={thumbnail} alt={name} className='contain'/> : <img src={thumbnail} alt={name}/>}
             </div>
             <div className="about">
                 <h3 className="title">

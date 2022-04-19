@@ -43,7 +43,7 @@ const HeaderTag = styled.header`
   }
 `
 
-const Header = () => {
+const   Header = () => {
     return (
         <Fragment>
             <HeaderTag>
