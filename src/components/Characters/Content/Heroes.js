@@ -7,8 +7,12 @@ class Heroes extends Component {
         super(props)
 
         this.state = {
-            characters: null,
-            loading: true
+            characters: [],
+            loading: true,
+            error: false,
+            newItemLoading: false,
+            offset: 210,
+            charEnded: false
         }
         this.imageNotFound = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
     }
@@ -17,24 +21,53 @@ class Heroes extends Component {
     marvelService = new MarvelService()
 
     componentDidMount() {
-        this.getData()
-        console.log(this.state.characters)
+        this.loadChars()
     }
 
-    onLoadedCharacters = (chars) => {
+    /*onLoadedCharacters = (chars) => {
         this.setState({characters: chars, loading: false})
-    }
+    }*/
 
-    getData = () => {
+   /* getData = () => {
         this.marvelService.getAllCharacters()
             .then((res) => {
                 this.onLoadedCharacters(res)
             })
+            .catch(this.onError)
+    }*/
+
+    onError = () => {
+        this.setState({error: true, loading: false})
+    }
+
+    loadChars = (offset) => {
+        this.onCharListLoading()
+        this.marvelService.getAllCharacters(offset)
+            .then(this.onCharListLoaded)
+            .catch(this.onError)
+    }
+    onCharListLoading = () => {
+        this.setState({
+            newItemLoading: true
+        })
+    }
+    onCharListLoaded = (newCharList) => {
+        let ended = false;
+        if (newCharList.length < 9) {
+            ended = true;
+        }
+        this.setState(({offset, characters}) => ({
+            characters: [...characters, ...newCharList],
+            loading: false,
+            newItemLoading: false,
+            offset: offset + 9,
+            charEnded: ended
+        }))
     }
 
 
     render() {
-        const {loading, characters} = this.state
+        const {loading, characters, error, offset, newItemLoading, charEnded} = this.state
         return (
                 <div className="heroes">
                     {loading ? <Spinner/> :
@@ -54,7 +87,7 @@ class Heroes extends Component {
                                 )
                             })}
                         </div>}
-                    <button className="btnMore">LOAD MORE</button>
+                    <button className="btnMore" disabled={newItemLoading} onClick={() => this.loadChars(offset)}>LOAD MORE</button>
                 </div>
         );
     }

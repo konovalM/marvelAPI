@@ -11,6 +11,7 @@ import MarvelService from "../../../services/MarvelService";
 import Spinner from "../Spinner";
 import Heroes from "./Heroes";
 import AboutWrapper from "./AboutWrapper";
+import ErrorBoundary from "../../ErrorBoundaries/ErrorBoundary";
 
 const SectionContent = styled.section`
   padding: 50px 0 45px;
@@ -160,8 +161,12 @@ class Content extends Component{
                 <SectionContent className="content">
                     <div className="container">
                         <div className="wrapper">
-                            <Heroes getCharId={this.getCharId}/>
-                            <AboutWrapper charId={charId}/>
+                            <ErrorBoundary>
+                                <Heroes getCharId={this.getCharId}/>
+                            </ErrorBoundary>
+                            <ErrorBoundary>
+                                <AboutWrapper charId={charId}/>
+                            </ErrorBoundary>
                         </div>
                     </div>
                 </SectionContent>

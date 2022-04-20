@@ -53,11 +53,10 @@ class AboutWrapper extends Component {
     componentDidMount() {
         this.getData()
     }
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState, ss) {
         if (prevProps.charId !== this.props.charId){
             this.getData()
         }
-
     }
 
     render() {
@@ -90,8 +89,8 @@ const CharContent = ({char}) => {
                 </div>
                 <div className="personAbout">
                     <div className="name">{char.name}</div>
-                    <Button color='#9F0013' text='HOMEPAGE' margin='0 0 10px 0'/>
-                    <Button color='#5C5C5C' text='WIKI'/>
+                    <Button color='#9F0013' text='HOMEPAGE' margin='0 0 10px 0' link={char.homepage}/>
+                    <Button color='#5C5C5C' text='WIKI' link={char.wiki}/>
                 </div>
             </div>
             <div className="descr">
