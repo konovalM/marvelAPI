@@ -23,7 +23,7 @@ const SectionContent = styled.section`
     display: grid;
     grid-template-columns: 650px 425px;
     grid-column-gap: 25px;
-
+    position: relative;
   }
   .heroesWrapper{
     display: grid;
@@ -124,11 +124,7 @@ const SectionContent = styled.section`
     color: #000000;
     padding: 5px;
   }
-  .asset{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-  }
+
   .bg{
     height: 200px;
   }
@@ -138,6 +134,10 @@ const SectionContent = styled.section`
   }
   .notFound{
     object-fit: contain;
+  }
+  .aboutWrapper{
+    z-index: 1000;
+    position: relative;
   }
 `
 
@@ -164,7 +164,6 @@ class Content extends Component{
                             <AboutWrapper charId={charId}/>
                         </div>
                     </div>
-                    <img src={asset} alt="" className='asset'/>
                 </SectionContent>
             </Fragment>
         )

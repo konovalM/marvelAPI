@@ -17,7 +17,6 @@ export default class MarvelService {
     }
     getCharacter = async (id) => {
         const res = await this.getResource(`${this._apiBase}/characters/${id}?${this._apiKey}`)
-        console.log(`${this._apiBase}/characters/${id}?${this._apiKey}`)
         return this.formatData(res.data.results[0])
     }
     formatData = (obj) => {
@@ -27,7 +26,8 @@ export default class MarvelService {
             description: obj.description,
             thumbnail: obj.thumbnail.path + '.' + obj.thumbnail.extension,
             homepage: obj.urls[0].url,
-            wiki: obj.urls[1].url
+            wiki: obj.urls[1].url,
+            comics: obj.comics.items
         })
     }
 }
