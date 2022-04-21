@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Spinner from "../Spinner";
 import MarvelService from "../../../services/MarvelService";
+import PropTypes from "prop-types";
 
 class Heroes extends Component {
     constructor(props) {
@@ -12,7 +13,8 @@ class Heroes extends Component {
             error: false,
             newItemLoading: false,
             offset: 210,
-            charEnded: false
+            charEnded: false,
+            activeChar: null
         }
         this.imageNotFound = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
     }
@@ -65,16 +67,27 @@ class Heroes extends Component {
         }))
     }
 
+    getActiveChar = (id) => {
+        this.setState({activeChar: id})
+    }
 
     render() {
-        const {loading, characters, error, offset, newItemLoading, charEnded} = this.state
+        const {loading, characters, error, offset, newItemLoading, charEnded, activeChar} = this.state
         return (
                 <div className="heroes">
                     {loading ? <Spinner/> :
                         <div className="heroesWrapper">
                             {characters.map(obj => {
                                 return (
-                                    <div className="hero" key={obj.id} onClick={() => this.props.getCharId(obj.id)}>
+                                    <div
+                                        className={activeChar === obj.id ? 'hero hero_active' : 'hero'}
+                                         key={obj.id}
+                                         tabIndex={0}
+                                         onClick={() => {
+                                             this.props.getCharId(obj.id)
+                                             this.getActiveChar(obj.id)
+                                         }
+                                    }>
                                         <div className="bg">
                                             {obj.thumbnail == this.imageNotFound
                                                 ?
@@ -91,6 +104,10 @@ class Heroes extends Component {
                 </div>
         );
     }
+}
+
+Heroes.propTypes = {
+    getCharId: PropTypes.func
 }
 
 export default Heroes;

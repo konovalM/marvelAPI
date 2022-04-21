@@ -47,6 +47,10 @@ const SectionContent = styled.section`
     filter: drop-shadow(0px 5px 20px #9F0013);
     transform: translateY(-8px);
   }
+  .hero_active{
+    filter: drop-shadow(0px 5px 20px #9F0013);
+    transform: translateY(-8px);
+  }
   .title{
     margin: 15px 0 0 15px;
   }

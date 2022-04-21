@@ -6,6 +6,7 @@ import Button from "../Button";
 import Skeleton from "../Skeleton";
 import MarvelService from "../../../services/MarvelService";
 import content from "./Content";
+import PropTypes from 'prop-types'
 
 class AboutWrapper extends Component {
     constructor(props) {
@@ -115,6 +116,10 @@ const CharContent = ({char}) => {
             </ul>
         </div>
     )
+}
+
+AboutWrapper.propTypes = {
+    charId: PropTypes.number
 }
 
 export default AboutWrapper;
