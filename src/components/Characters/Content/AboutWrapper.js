@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import tor from "../../../images/thor.jpg";
 import Spinner from "../Spinner";
 import Error from "../Error";
@@ -8,80 +8,69 @@ import MarvelService from "../../../services/MarvelService";
 import content from "./Content";
 import PropTypes from 'prop-types'
 
-class AboutWrapper extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            char: null,
-            loading: false,
-            error: false
-        }
-        this.template = 'Sorry, this character hasn\'t description.'
+const AboutWrapper = (props) => {
+    const [char, setChar] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
+
+    const template = 'Sorry, this character hasn\'t description.'
+
+    const marvelService = new MarvelService()
+
+    const onError = () => {
+        setError(true)
     }
 
-    marvelService = new MarvelService()
-
-    onError = () => {
-        this.setState({error: true})
-    }
-
-    onCharLoaded = (char) => {
-        this.setState({char: char, loading: false, error: false})
+    const onCharLoaded = (char) => {
+        setChar(char)
+        setLoading(false)
+        setError(false)
 
         if (char.description == ''){
-            this.setState(({char}) => {
-                    return (char.description = this.template);
-                }
-            )
+            setChar(char => ({...char, description: template}))
         }
     }
 
-    getData = () => {
-        const id = this.props.charId
+    const getData = () => {
+        const id = props.charId
         if (!id){
             return
         }
-        this.setState({loading: true})
-        this.marvelService.getCharacter(id)
+        setLoading(true)
+        marvelService.getCharacter(id)
             .then((res) => {
-                this.onCharLoaded(res)
+                onCharLoaded(res)
             })
             .catch(() => {
-                this.onError()
+                onError()
             })
     }
 
-    componentDidMount() {
-        this.getData()
-    }
-    componentDidUpdate(prevProps, prevState, ss) {
-        if (prevProps.charId !== this.props.charId){
-            this.getData()
-        }
-    }
+    useEffect(() => {
+        getData()
+    }, [props.charId])
 
-    render() {
-        const {char, loading, error} = this.state
-        const skelet = <Skeleton/>;
-        let content;
-        if (loading){
-            content = <Spinner/>
-        } else if (error) {
-            content = <Error/>
-        } else if (char){
-            content = <CharContent char={char}/>
-        } else {content = null}
-        return (
-            <>
-                <div className="aboutWrapper">
-                    {content || skelet}
-                </div>
-            </>
-        )
-    }
+    const skelet = <Skeleton/>;
+    let content;
+    if (loading){
+        content = <Spinner/>
+    } else if (error) {
+        content = <Error/>
+    } else if (char){
+        content = <CharContent char={char}/>
+    } else {content = null}
+
+    return (
+        <>
+            <div className="aboutWrapper">
+                {content || skelet}
+            </div>
+        </>
+    )
 }
 
 const CharContent = ({char}) => {
+    const template = 'Sorry, this character hasn\'t description.'
     return (
         <div className="about">
             <div className="person">
@@ -112,7 +101,7 @@ const CharContent = ({char}) => {
                     }
                 })
                 :
-                'Sorry, this character hasn\'t comics.'}
+                template}
             </ul>
         </div>
     )

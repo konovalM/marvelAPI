@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import {Component, Fragment} from "react";
+import {Component, Fragment, useEffect, useState} from "react";
 import thor from '../../images/thor.jpg'
 import left from '../../images/leftTriangle.svg'
 import right from '../../images/rightTriangle.svg'
@@ -150,94 +150,80 @@ const CharacterMainTag = styled.section`
 `
 
 
-class CharacterHeader extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            character: {
-                name: null,
-                description: null,
-                thumbnail: null,
-                homepage: null,
-                wiki: null
-            },
-            loading: true,
-            error: false
-        }
-        this.template = 'Sorry, this character hasn\'t description.'
-        console.log('constructor')
-    }
+const CharacterHeader = () => {
+    const [character, setCharacter] = useState({
+        name: null,
+        description: null,
+        thumbnail: null,
+        homepage: null,
+        wiki: null
+    })
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
 
-    componentDidMount() {
+    const template = 'Sorry, this character hasn\'t description.'
+    console.log('constructor')
+
+    useEffect(() => {
         console.log('mount')
-        this.getData()
-    }
+        getData()
+    }, [])
 
+    const marvelService = new MarvelService()
 
-    marvelService = new MarvelService()
+    const onCharLoaded = (char) => {
+        setCharacter(char)
+        setLoading(false)
+        setError(false)
 
-    onCharLoaded = (char) => {
-        this.setState({character: char, loading: false, error: false})
-
-        if (char.description == ''){
-            this.setState(({character}) => {
-                    return (character.description = this.template);
-                }
-            )
+        if (char.description === ''){
+            setCharacter(character => ({...character, description: template}))
         }
 
-        if (char.description.length > 200){
-            const newDescr = char.description.slice(0, 200) + '...'
-            this.setState(({character}) => {
-                    return (character.description = newDescr);
-                }
-            )
-        }
+
     }
 
-    onError = () => {
-        this.setState({error: true})
+    const onError = () => {
+        setError(true)
     }
 
-    getData = () => {
+    const getData = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
-        this.marvelService.getCharacter(id)
+        marvelService.getCharacter(id)
             .then((res) => {
-                this.onCharLoaded(res)
+                onCharLoaded(res)
             })
             .catch(() => {
-                this.onError()
+                onError()
             })
     }
 
-    changeChar = () => {
-        this.setState({loading: true})
-        this.getData()
+    const changeChar = () => {
+        setLoading(true)
+        getData()
     }
 
-    render() {
-        const {character, loading, error} = this.state
-        const errorComponent = error ? <Error/> : '',
-            mainContent = loading ? <Spinner/> : <Char char={character}/>;
-        console.log('render')
-        return(
-            <Fragment>
-                <CharacterMainTag className="main">
-                    <div className="container">
-                        <div className="wrapper">
-                            {errorComponent || mainContent}
-                            <div className="gridItem">
-                                <div className="textTop">Random character for today!<br/>
-                                    Do you want to get to know him better?</div>
-                                <div className="textBottom">Or choose another one</div>
-                                <a href='#' className="btn" onClick={this.changeChar}>TRY IT</a>
-                            </div>
+    const errorComponent = error ? <Error/> : null,
+        mainContent = loading ? <Spinner/> : <Char char={character}/>;
+
+    console.log('render')
+    return(
+        <Fragment>
+            <CharacterMainTag className="main">
+                <div className="container">
+                    <div className="wrapper">
+                        {errorComponent || mainContent}
+                        <div className="gridItem">
+                            <div className="textTop">Random character for today!<br/>
+                                Do you want to get to know him better?</div>
+                            <div className="textBottom">Or choose another one</div>
+                            <a href='#' className="btn" onClick={changeChar}>TRY IT</a>
                         </div>
                     </div>
-                </CharacterMainTag>
-            </Fragment>
-        )
-    }
+                </div>
+            </CharacterMainTag>
+        </Fragment>
+    )
 }
 
 const Char = ({char}) => {

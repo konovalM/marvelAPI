@@ -1,30 +1,24 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import Spinner from "../Spinner";
 import MarvelService from "../../../services/MarvelService";
 import PropTypes from "prop-types";
 
-class Heroes extends Component {
-    constructor(props) {
-        super(props)
+const Heroes = (props) => {
+    const [characters, setCharacters] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(false)
+    const [newItemLoading, setNewItemLoading] = useState(false)
+    const [offset, setOffset] = useState(210)
+    const [charEnded, setCharEnded] = useState(false)
+    const [activeChar, setActiveChar] = useState(null)
+    const imageNotFound = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
 
-        this.state = {
-            characters: [],
-            loading: true,
-            error: false,
-            newItemLoading: false,
-            offset: 210,
-            charEnded: false,
-            activeChar: null
-        }
-        this.imageNotFound = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg'
-    }
+    const marvelService = new MarvelService()
 
+    useEffect(() => {
+        loadChars()
+    }, [])
 
-    marvelService = new MarvelService()
-
-    componentDidMount() {
-        this.loadChars()
-    }
 
     /*onLoadedCharacters = (chars) => {
         this.setState({characters: chars, loading: false})
@@ -38,72 +32,68 @@ class Heroes extends Component {
             .catch(this.onError)
     }*/
 
-    onError = () => {
-        this.setState({error: true, loading: false})
+    const onError = () => {
+        setError(true)
+        setLoading(false)
     }
 
-    loadChars = (offset) => {
-        this.onCharListLoading()
-        this.marvelService.getAllCharacters(offset)
-            .then(this.onCharListLoaded)
-            .catch(this.onError)
+    const loadChars = (offset) => {
+        onCharListLoading()
+        marvelService.getAllCharacters(offset)
+            .then(onCharListLoaded)
+            .catch(onError)
     }
-    onCharListLoading = () => {
-        this.setState({
-            newItemLoading: true
-        })
+    const onCharListLoading = () => {
+        setNewItemLoading(true)
     }
-    onCharListLoaded = (newCharList) => {
+
+    const onCharListLoaded = (newCharList) => {
         let ended = false;
         if (newCharList.length < 9) {
             ended = true;
         }
-        this.setState(({offset, characters}) => ({
-            characters: [...characters, ...newCharList],
-            loading: false,
-            newItemLoading: false,
-            offset: offset + 9,
-            charEnded: ended
-        }))
+        setCharacters(characters => ([...characters, ...newCharList]))
+        setLoading(false)
+        setNewItemLoading(false)
+        setOffset(offset => (offset + 9))
+        setCharEnded(ended)
     }
 
-    getActiveChar = (id) => {
-        this.setState({activeChar: id})
+    const getActiveChar = (id) => {
+        setActiveChar(id)
+        window.scroll(0, 400)
     }
 
-    render() {
-        const {loading, characters, error, offset, newItemLoading, charEnded, activeChar} = this.state
-        return (
-                <div className="heroes">
-                    {loading ? <Spinner/> :
-                        <div className="heroesWrapper">
-                            {characters.map(obj => {
-                                return (
-                                    <div
-                                        className={activeChar === obj.id ? 'hero hero_active' : 'hero'}
-                                         key={obj.id}
-                                         tabIndex={0}
-                                         onClick={() => {
-                                             this.props.getCharId(obj.id)
-                                             this.getActiveChar(obj.id)
-                                         }
-                                    }>
-                                        <div className="bg">
-                                            {obj.thumbnail == this.imageNotFound
-                                                ?
-                                                <img src={obj.thumbnail} alt="" className='notFound'/>
-                                                :
-                                                <img src={obj.thumbnail} alt="" className='heroImg'/>}
-                                        </div>
-                                        <h4 className="title">{obj.name}</h4>
+    return (
+            <div className="heroes">
+                {loading ? <Spinner/> :
+                    <div className="heroesWrapper">
+                        {characters.map(obj => {
+                            return (
+                                <div
+                                    className={activeChar === obj.id ? 'hero hero_active' : 'hero'}
+                                     key={obj.id}
+                                     tabIndex={0}
+                                     onClick={() => {
+                                         props.getCharId(obj.id)
+                                         getActiveChar(obj.id)
+                                     }
+                                }>
+                                    <div className="bg">
+                                        {obj.thumbnail == imageNotFound
+                                            ?
+                                            <img src={obj.thumbnail} alt="" className='notFound'/>
+                                            :
+                                            <img src={obj.thumbnail} alt="" className='heroImg'/>}
                                     </div>
-                                )
-                            })}
-                        </div>}
-                    <button className="btnMore" disabled={newItemLoading} onClick={() => this.loadChars(offset)}>LOAD MORE</button>
-                </div>
-        );
-    }
+                                    <h4 className="title">{obj.name}</h4>
+                                </div>
+                            )
+                        })}
+                    </div>}
+                <button className="btnMore" disabled={newItemLoading} onClick={() => loadChars(offset)}>LOAD MORE</button>
+            </div>
+    );
 }
 
 Heroes.propTypes = {

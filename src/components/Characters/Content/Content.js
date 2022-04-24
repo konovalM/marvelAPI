@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import {Fragment} from "react";
+import {Fragment, useState} from "react";
 import abyss from '../../../images/abys.jpg'
 import Button from "../Button";
 import left from '../../../images/leftTriangle.svg'
@@ -146,37 +146,30 @@ const SectionContent = styled.section`
   }
 `
 
-class Content extends Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            charId: null
-        }
+const Content = () => {
+    const [charId, setCharId] = useState(null)
+
+
+    const getCharId = (id) => {
+        setCharId(id)
     }
 
-    getCharId = (id) => {
-        this.setState({charId: id})
-    }
-
-    render() {
-        const {charId} = this.state
-        return(
-            <Fragment>
-                <SectionContent className="content">
-                    <div className="container">
-                        <div className="wrapper">
-                            <ErrorBoundary>
-                                <Heroes getCharId={this.getCharId}/>
-                            </ErrorBoundary>
-                            <ErrorBoundary>
-                                <AboutWrapper charId={charId}/>
-                            </ErrorBoundary>
-                        </div>
+    return(
+        <Fragment>
+            <SectionContent className="content">
+                <div className="container">
+                    <div className="wrapper">
+                        <ErrorBoundary>
+                            <Heroes getCharId={getCharId}/>
+                        </ErrorBoundary>
+                        <ErrorBoundary>
+                            <AboutWrapper charId={charId}/>
+                        </ErrorBoundary>
                     </div>
-                </SectionContent>
-            </Fragment>
-        )
-    }
+                </div>
+            </SectionContent>
+        </Fragment>
+    )
 }
 
 export default Content
